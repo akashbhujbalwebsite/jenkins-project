@@ -1,2 +1,1 @@
-# course-jenkins-project
-course-jenkins-project
+# jenkins-project
