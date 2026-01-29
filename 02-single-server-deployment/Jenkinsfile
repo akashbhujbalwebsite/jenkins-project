@@ -18,7 +18,8 @@ pipeline {
         stage('Test') {
             steps {
                 dir('02-single-server-deployment') {
-                    sh 'pytest'
+                    // pytest is installed under ~/.local/bin
+                    sh '$HOME/.local/bin/pytest'
                 }
             }
         }
@@ -26,7 +27,7 @@ pipeline {
         stage('Package code') {
             steps {
                 dir('02-single-server-deployment') {
-                    sh 'zip -r myapp.zip . -x "*.git*"'
+                    sh 'zip -r myapp.zip .'
                     sh 'ls -lart'
                 }
             }
