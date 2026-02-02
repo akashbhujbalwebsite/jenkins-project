@@ -3,6 +3,6 @@ version = 0.1
 stack_name = "lambda-app"
 resolve_s3 = true
 s3_prefix = "lambda-app"
-region = "us-east-1"
+region = "ap-south-1"
 capabilities = "CAPABILITY_IAM"
 image_repositories = []
