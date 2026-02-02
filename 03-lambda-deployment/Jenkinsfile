@@ -6,7 +6,7 @@ pipeline {
         stage('Setup') {
             steps {
                 sh '''
-                  cd lambda-app
+                  cd 03-lambda-deployment/lambda-app
                   python3 -m venv venv
                   . venv/bin/activate
                   pip install --upgrade pip
@@ -18,7 +18,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh '''
-                  cd lambda-app
+                  cd 03-lambda-deployment/lambda-app
                   . venv/bin/activate
                   pytest
                 '''
@@ -28,7 +28,7 @@ pipeline {
         stage('Build') {
             steps {
                 sh '''
-                  cd lambda-app
+                  cd 03-lambda-deployment/lambda-app
                   . venv/bin/activate
                   sam build -t template.yaml
                 '''
@@ -42,7 +42,7 @@ pipeline {
             }
             steps {
                 sh '''
-                  cd lambda-app
+                  cd 03-lambda-deployment/lambda-app
                   . venv/bin/activate
                   sam deploy \
                     -t template.yaml \
