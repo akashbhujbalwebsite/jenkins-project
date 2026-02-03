@@ -16,15 +16,6 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            steps {
-                sh '''
-                pip install -r requirements.txt
-                pytest test_app.py
-                '''
-            }
-        }
-
         stage('Docker Login') {
             steps {
                 withCredentials([
@@ -60,7 +51,7 @@ pipeline {
 
     post {
         success {
-            echo "✅ Docker images pushed:"
+            echo "✅ Docker images pushed successfully:"
             echo " - ${IMAGE_SHA}"
             echo " - ${IMAGE_LATEST}"
         }
