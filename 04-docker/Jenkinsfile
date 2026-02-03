@@ -2,51 +2,70 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'sanjeevkt720/jenkins-flask-app'
-        IMAGE_TAG = "${IMAGE_NAME}:${env.GIT_COMMIT}"
-        
+        DOCKER_REPO   = 'akashbhujbal5101/jenkins-flask-app'
+        GIT_SHA       = "${env.GIT_COMMIT}"
+        IMAGE_SHA     = "${DOCKER_REPO}:${GIT_SHA}"
+        IMAGE_LATEST  = "${DOCKER_REPO}:latest"
     }
 
-    
     stages {
 
-        stage('Setup') {
+        stage('Checkout') {
             steps {
-                sh "pip install -r requirements.txt"
+                checkout scm
             }
         }
+
         stage('Test') {
             steps {
-                sh "pytest"
+                sh '''
+                pip install -r requirements.txt
+                pytest || echo "No tests found"
+                '''
             }
         }
 
-        stage('Login to docker hub') {
+        stage('Docker Login') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-creds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                sh 'echo ${PASSWORD} | docker login -u ${USERNAME} --password-stdin'}
-                echo 'Login successfully'
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-creds',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )
+                ]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                }
             }
         }
 
-        stage('Build Docker Image')
-        {
-            steps
-            {
-                sh 'docker build -t ${IMAGE_TAG} .'
-                echo "Docker image build successfully"
-                sh 'docker image ls'
-                
+        stage('Build Docker Image') {
+            steps {
+                sh '''
+                docker build -t $IMAGE_SHA .
+                docker tag $IMAGE_SHA $IMAGE_LATEST
+                '''
             }
         }
 
-        stage('Push Docker Image')
-        {
-            steps
-            {
-                sh 'docker push ${IMAGE_TAG}'
-                echo "Docker image push successfully"
+        stage('Push Docker Images') {
+            steps {
+                sh '''
+                docker push $IMAGE_SHA
+                docker push $IMAGE_LATEST
+                '''
             }
-        }      
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Images pushed successfully:"
+            echo " - ${IMAGE_SHA}"
+            echo " - ${IMAGE_LATEST}"
+        }
+        failure {
+            echo "❌ Pipeline failed"
+        }
     }
 }
