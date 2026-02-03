@@ -32,10 +32,12 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh '''
-                docker build -t $IMAGE_SHA .
-                docker tag $IMAGE_SHA $IMAGE_LATEST
-                '''
+                dir('04-docker') {
+                    sh '''
+                    docker build -t $IMAGE_SHA .
+                    docker tag $IMAGE_SHA $IMAGE_LATEST
+                    '''
+                }
             }
         }
 
