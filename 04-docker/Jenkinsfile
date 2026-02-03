@@ -2,10 +2,10 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_REPO   = 'akashbhujbal5101/jenkins-flask-app'
-        GIT_SHA       = "${env.GIT_COMMIT}"
-        IMAGE_SHA     = "${DOCKER_REPO}:${GIT_SHA}"
-        IMAGE_LATEST  = "${DOCKER_REPO}:latest"
+        DOCKER_REPO  = 'akashbhujbal5101/jenkins-flask-app'
+        GIT_SHA      = "${env.GIT_COMMIT}"
+        IMAGE_SHA    = "${DOCKER_REPO}:${GIT_SHA}"
+        IMAGE_LATEST = "${DOCKER_REPO}:latest"
     }
 
     stages {
@@ -20,7 +20,7 @@ pipeline {
             steps {
                 sh '''
                 pip install -r requirements.txt
-                pytest || echo "No tests found"
+                pytest test_app.py
                 '''
             }
         }
@@ -60,7 +60,7 @@ pipeline {
 
     post {
         success {
-            echo "✅ Images pushed successfully:"
+            echo "✅ Docker images pushed:"
             echo " - ${IMAGE_SHA}"
             echo " - ${IMAGE_LATEST}"
         }
