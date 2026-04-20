@@ -1,4 +1,4 @@
-# Comprehensive Jenkins Project Course
+# Comprehensive Jenkins Project 
 
 This repository contains a step-by-step progression for learning Jenkins and building continuous integration and continuous deployment (CI/CD) pipelines. Each directory in the repository represents a progressively advanced stage of automating software delivery using Jenkins.
 
